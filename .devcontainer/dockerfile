@@ -1,0 +1,5 @@
+FROM azul/zulu-openjdk-alpine:17-latest
+
+RUN apk update
+
+RUN apk add git
