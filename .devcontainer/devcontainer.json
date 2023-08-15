@@ -1,5 +1,6 @@
 {
-  "image": "azul/zulu-openjdk-alpine:17-latest",
+  //"image": "azul/zulu-openjdk-alpine:17-latest",
+  "build": { "dockerfile": "dockerfile" },
   "features": {
   },
   "customizations": {
