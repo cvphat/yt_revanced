@@ -35,6 +35,7 @@ jobs:
       - name: Patch Stock
         run: |
           ls -l
+          sha256sum stock.apk
           java -jar cli.jar -a stock.apk -o yt-rv.apk -b patches.jar -m merge.apk
           mkdir release
           mv yt-rv.apk release/yt-rv.apk
