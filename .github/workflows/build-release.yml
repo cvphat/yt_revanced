@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: "11"
+          distribution: "zulu"
+      - name: Download CLI
+        run: |
+          - latest_release__cli_url=$(curl -s "https://api.github.com/repos/revanced/revanced-cli/releases/latest" | jq -r '.assets_url')
+          - curl -s "$latest_release__cli_url" | jq -r '.[] | select(.name | endswith(".jar")) | .browser_download_url' | xargs -n 1 curl -J -L -o cli.jar
+      - name: Download Patches
+        run: |
+          - latest_release__patches_url=$(curl -s "https://api.github.com/repos/revanced/revanced-patches/releases/latest" | jq -r '.assets_url')
+          - curl -s "$latest_release__patches_url" | jq -r '.[] | select(.name | endswith(".jar")) | .browser_download_url' | xargs -n 1 curl -J -L -o patches.jar
+      - name: Download Integrations
+        run: |
+          - latest_release__integrations_url=$(curl -s "https://api.github.com/repos/revanced/revanced-integrations/releases/latest" | jq -r '.assets_url')
+          - curl -s "$latest_release__integrations_url" | jq -r '.[] | select(.name | endswith(".apk")) | .browser_download_url' | xargs -n 1 curl -J -L -o merge.apk
+      - name: Patch Stock
+        run: |
+          - cat ${{ secrets.SIGNING_KEYSTORE }} | base64 -d > yt-rv.keystore
+          - java -jar cli.jar -a stock.apk -o yt-rv.apk -b patches.jar -m merge.apk
+          - rm yt-rv.keystore
+          - mv yt-rv.apk yt-rv-${{ env.RELEASE_VERSION }}.apk
+      - name: Publish release APK
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: yt-rv-${{ env.RELEASE_VERSION }}.apk
+        
