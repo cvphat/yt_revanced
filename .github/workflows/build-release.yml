@@ -34,10 +34,20 @@ jobs:
           curl -s "$latest_release__integrations_url" | jq -r '.[] | select(.name | endswith(".apk")) | .browser_download_url' | xargs -n 1 curl -J -L -o merge.apk
       - name: Patch Stock
         run: |
-          cat ${{ secrets.SIGNING_KEYSTORE }} | base64 -d > yt-rv.keystore
           java -jar cli.jar -a stock.apk -o yt-rv.apk -b patches.jar -m merge.apk
-          rm yt-rv.keystore
-          mv yt-rv.apk yt-rv-${{ env.RELEASE_VERSION }}.apk
+          mkdir release
+          mv yt-rv.apk release/yt-rv.apk
+      - name: Sign APK
+        id: sign_apk
+        uses: ilharp/sign-android-release@v1
+        with:
+          releaseDir: release
+          signingKey: ${{ secrets.SIGNING_KEYSTORE }}
+          keyStorePassword: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          keyAlias: ${{ secrets.SIGNING_KEY_ALIAS }}
+          keyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+      - name: Add version to APK
+        run: mv ${{steps.sign_apk.outputs.signedFile}} yt-rv-${{ env.RELEASE_VERSION }}.apk
       - name: Publish release APK
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
