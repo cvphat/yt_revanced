@@ -38,7 +38,7 @@ jobs:
           curl -s "$latest_release__integrations_url" | jq -r '.[] | select(.name | endswith(".apk")) | .browser_download_url' | xargs -n 1 curl -J -L -o merge.apk
       - name: Patch Stock
         run: |
-          java -jar cli.jar -a stock.apk -o yt-rv.apk -b patches.jar -m merge.apk
+          java -jar cli.jar patch -o yt-rv.apk -b patches.jar -m merge.apk stock.apk
           mkdir release
           mv yt-rv.apk release/yt-rv.apk
       - name: Sign APK
