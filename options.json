@@ -4,7 +4,8 @@
     "key" : "packageName",
     "value" : "app.revanced.android.youtube"
   } ]
-}, {
+}, 
+{
   "patchName" : "Custom branding",
   "options" : [ {
     "key" : "appName",
@@ -13,13 +14,8 @@
     "key" : "iconPath",
     "value" : "branding"
   } ]
-}, {
-  "patchName" : "Spoof client",
-  "options" : [ {
-    "key" : "client-id",
-    "value" : null
-  } ]
-}, {
+},
+{
   "patchName" : "Spotify theme",
   "options" : [ {
     "key" : "backgroundColor",
@@ -30,6 +26,13 @@
   }, {
     "key" : "accentPressedColor",
     "value" : "#ff169c46"
+  } ]
+},
+{
+  "patchName" : "GmsCore support",
+  "options" : [ {
+    "key" : "gmsCoreVendor",
+    "value" : "com.mgoogle"
   } ]
 }, {
   "patchName" : "Theme",

@@ -37,14 +37,9 @@ jobs:
       - name: Patch Stock
         run: |
           java -jar cli.jar patch -o yt-rv.apk -b patches.jar -m merge.apk \
-          -i "Custom branding" \
-          -i "Change package name" \
-          -i "Enable android debugging" \
-          -i "Predictive back gesture" \
-          -i "Remove player controls background" \
-          -i "Remove screen capture restriction" \
-          -i "Remove screenshot restriction" \
-          -i "Spoof wifi connection" \
+          --options "options.json" \
+          --include "Custom branding" \
+          --include "Change header" \
           stock.apk
           mkdir release
           mv yt-rv.apk release/yt-rv.apk
