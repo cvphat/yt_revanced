@@ -31,8 +31,8 @@
 {
   "patchName" : "GmsCore support",
   "options" : [ {
-    "key" : "gmsCoreVendor",
-    "value" : "com.mgoogle"
+    "key" : "gmsCoreVendorGroupId",
+    "value" : "app.revanced"
   } ]
 }, {
   "patchName" : "Theme",
