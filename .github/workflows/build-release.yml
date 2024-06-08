@@ -34,8 +34,8 @@ jobs:
         run: |
           latest_release__integrations_url=$(curl -s "https://api.github.com/repos/revanced/revanced-integrations/releases/latest" | jq -r '.assets_url')
           curl -s "$latest_release__integrations_url" | jq -r '.[] | select(.name | endswith(".apk")) | .browser_download_url' | xargs -n 1 curl -J -L -o merge.apk
-      # - name: Merge Stock
-      #   run: cat stock-split.apk.?? > stock.apk
+      - name: Download Stock
+        run: curl -L "https://drive.usercontent.google.com/download?id=1KTPfwp92KQxyvX5m2nkvT1Y9anGUOpyA&confirm=xxx" -o stock.apk
       - name: Patch Stock
         run: |
           java -jar cli.jar patch -o yt-rv.apk -b patches.jar -m merge.apk \
