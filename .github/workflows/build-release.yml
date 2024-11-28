@@ -36,7 +36,7 @@ jobs:
         run: |
           java -jar cli.jar patch -p patches.rvp -o yt-rv.apk \
           --options "options.json" \
-          -e "Custom branding" \
+          -e "Custom branding" -OiconPath=branding \
           -e "Change header" \
           -e "Remove player controls background" \
           stock.apk
