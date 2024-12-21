@@ -1,9 +1,9 @@
-name: CI
+name: YT_RV_CI
 
 on:
   push:
     tags:
-      - "v*"
+      - "yt.v*"
 
 jobs:
   build:

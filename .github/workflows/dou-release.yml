@@ -1,0 +1,61 @@
+name: DOU_RV_CI
+
+on:
+  push:
+    tags:
+      - "dou.v*"
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "zulu"
+      - name: Install jq
+        uses: dcarbone/install-jq-action@v1.0.1
+      - name: Download CLI
+        run: |
+          latest_release__cli_url=$(curl -s "https://api.github.com/repos/revanced/revanced-cli/releases/latest" | jq -r '.assets_url')
+          curl -s "$latest_release__cli_url" | jq -r '.[] | select(.name | endswith(".jar")) | .browser_download_url' | xargs -n 1 curl -J -L -o cli.jar
+      - name: Download Patches
+        run: |
+          latest_release__patches_url=$(curl -s "https://api.github.com/repos/revanced/revanced-patches/releases/latest" | jq -r '.assets_url')
+          curl -s "$latest_release__patches_url" | jq -r '.[] | select(.name | endswith(".rvp")) | .browser_download_url' | xargs -n 1 curl -J -L -o patches.rvp
+      - name: Download Stock
+        run: curl -L "https://drive.usercontent.google.com/download?id=1EhUsrQpv-TjBXwjRInSK_-53HzwmVGe-&confirm=xxx" -o stock.apk
+      - name: Patch Stock
+        run: |
+          java -jar cli.jar patch -p patches.rvp -o dou-rv.apk \
+          stock.apk
+          mkdir release
+          mv dou-rv.apk release/dou-rv.apk
+      - name: Sign APK
+        id: sign_apk
+        uses: ilharp/sign-android-release@v1
+        with:
+          releaseDir: release
+          signingKey: ${{ secrets.SIGNING_KEYSTORE }}
+          keyStorePassword: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          keyAlias: ${{ secrets.SIGNING_KEY_ALIAS }}
+          keyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+      - name: Add version to APK
+        run: |
+          mv ${{steps.sign_apk.outputs.signedFile}} dou-rv_${{ env.RELEASE_VERSION }}.apk
+          ls -l
+      - name: Publish release APK
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "${{ env.RELEASE_VERSION }}"
+          files: dou-rv_${{ env.RELEASE_VERSION }}.apk
+        
