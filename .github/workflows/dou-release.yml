@@ -29,12 +29,12 @@ jobs:
       - name: Download Patches
         run: |
           latest_release__patches_url=$(curl -s "https://api.github.com/repos/revanced/revanced-patches/releases/latest" | jq -r '.assets_url')
-          curl -s "$latest_release__patches_url" | jq -r '.[] | select(.name | endswith(".rvp")) | .browser_download_url' | xargs -n 1 curl -J -L -o patches.rvp
+          curl -s "$latest_release__patches_url" | jq -r '.[] | select(.name | endswith("..mpp")) | .browser_download_url' | xargs -n 1 curl -J -L -o patches..mpp
       - name: Download Stock
         run: curl -L "https://drive.usercontent.google.com/download?id=1EhUsrQpv-TjBXwjRInSK_-53HzwmVGe-&confirm=xxx" -o stock.apk
       - name: Patch Stock
         run: |
-          java -jar cli.jar patch -p patches.rvp -o dou-rv.apk \
+          java -jar cli.jar patch -p patches..mpp -o dou-rv.apk \
           stock.apk
           mkdir release
           mv dou-rv.apk release/dou-rv.apk
