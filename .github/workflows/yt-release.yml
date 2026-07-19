@@ -50,6 +50,7 @@ jobs:
       - name: Add version to APK
         run: |
           mv ${{steps.sign_apk.outputs.signedFile}} yt-rv_${{ env.RELEASE_VERSION }}.apk
+          mv yt-rv.apk yt-rv_origin_${{ env.RELEASE_VERSION }}.apk
           ls -l
       - name: Publish release APK
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -58,6 +59,6 @@ jobs:
           prerelease: false
           automatic_release_tag: "${{ env.RELEASE_VERSION }}"
           files: |
-            yt-rv.apk 
+            yt-rv_origin_${{ env.RELEASE_VERSION }}.apk
             yt-rv_${{ env.RELEASE_VERSION }}.apk
         
