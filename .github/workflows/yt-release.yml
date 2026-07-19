@@ -24,7 +24,7 @@ jobs:
         uses: dcarbone/install-jq-action@v1.0.1
       - name: Download CLI
         run: |
-          latest_release__cli_url=$(curl -s "https://api.github.com/repos/MorpheApp/morphe-cli/releases/latest" | jq -r '.assets_url')
+          latest_release__cli_url=$(curl -s "https://api.github.com/repos/MorpheApp/morphe-desktop/releases/latest" | jq -r '.assets_url')
           curl -s "$latest_release__cli_url" | jq -r '.[] | select(.name | endswith(".jar")) | .browser_download_url' | xargs -n 1 curl -J -L -o cli.jar
       - name: Download Patches
         run: |
@@ -35,10 +35,6 @@ jobs:
       - name: Patch Stock
         run: |
           java -jar cli.jar patch -p patches.mpp -o yt-rv.apk \
-          --options "options.json" \
-          -e "Custom branding" -OiconPath=branding \
-          -e "Change header" \
-          -e "Remove player controls background" \
           stock.apk
           mkdir release
           mv yt-rv.apk release/yt-rv.apk
